@@ -19,7 +19,6 @@ function CommentList({ feedbackId }) {
                 {comments.map(comment => (
                     <li key={comment.CommentID}>
                         <p>{comment.CommentText}</p>
-                        {/* You can add more details like commenter's name, date, etc. */}
                     </li>
                 ))}
             </ul>
