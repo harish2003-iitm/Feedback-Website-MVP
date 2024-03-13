@@ -3,12 +3,10 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 // Import routes
-const userRoutes = require('./src/routes/userRoutes'); // Adjust the path as necessary
-const feedbackRoutes = require('./src/routes/feedbackRoutes'); // Adjust as necessary
-const commentsRoutes = require('./src/routes/commentsRoutes'); // Adjust as necessary
-const votesRoutes = require('./src/routes/votesRoutes'); // Adjust as necessary
-
-const app = express();
+const userRoutes = require('./src/routes/userRoutes'); 
+const feedbackRoutes = require('./src/routes/feedbackRoutes');
+const commentsRoutes = require('./src/routes/commentsRoutes'); 
+const votesRoutes = require('./src/routes/votesRoutes'); 
 
 // Middleware
 app.use(cors()); // Handle CORS
