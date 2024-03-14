@@ -1,19 +1,32 @@
-const db = require('../config/dbConfig');
+const sql = require('mssql');
+const dbConfig = require('../config/dbConfig');
 
 class Vote {
     static async findAll() {
-        const query = 'SELECT * FROM Votes';
-        const { rows } = await db.query(query);
-        return rows;
+        try {
+            let pool = await sql.connect(dbConfig);
+            const { recordset } = await pool.request().query('SELECT * FROM Votes');
+            sql.close();
+            return recordset;
+        } catch (error) {
+            sql.close();
+            throw error;
+        }
     }
 
     static async findByFeedbackId(feedbackId) {
-        const query = 'SELECT * FROM Votes WHERE FeedbackID = $1';
-        const { rows } = await db.query(query, [feedbackId]);
-        return rows;
+        try {
+            let pool = await sql.connect(dbConfig);
+            const { recordset } = await pool.request()
+                                             .input('feedbackId', sql.Int, feedbackId)
+                                             .query('SELECT * FROM Votes WHERE FeedbackID = @feedbackId');
+            sql.close();
+            return recordset;
+        } catch (error) {
+            sql.close();
+            throw error;
+        }
     }
-
-    // Additional methods for CRUD operations can be added here
 }
 
 module.exports = Vote;

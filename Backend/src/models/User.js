@@ -1,19 +1,35 @@
-const db = require('../config/dbConfig');
+const sql = require('mssql');
+const dbConfig = require('../config/dbConfig');
 
 class User {
     static async findAll() {
-        const query = 'SELECT * FROM Users';
-        const { rows } = await db.query(query);
-        return rows;
+        try {
+            // Make sure to connect before any queries and close after done
+            let pool = await sql.connect(dbConfig);
+            const { recordset } = await pool.request().query('SELECT * FROM Users');
+            sql.close(); // Close the connection pool
+            return recordset;
+        } catch (error) {
+            sql.close(); // Make sure to close connection in case of error
+            throw error;
+        }
     }
 
     static async findById(id) {
-        const query = 'SELECT * FROM Users WHERE UserID = $1';
-        const { rows } = await db.query(query, [id]);
-        return rows[0];
+        try {
+            let pool = await sql.connect(dbConfig);
+            const { recordset } = await pool.request()
+                                             .input('id', sql.Int, id)
+                                             .query('SELECT * FROM Users WHERE UserID = @id');
+            sql.close(); // Close the connection pool
+            return recordset.length > 0 ? recordset[0] : null;
+        } catch (error) {
+            sql.close(); // Make sure to close connection in case of error
+            throw error;
+        }
     }
 
-    // Add more methods as needed for CRUD operations
+    // Implement other methods as needed
 }
 
 module.exports = User;

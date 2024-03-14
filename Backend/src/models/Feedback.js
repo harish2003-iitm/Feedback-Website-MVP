@@ -1,19 +1,32 @@
-const db = require('../config/dbConfig');
+const sql = require('mssql');
+const dbConfig = require('../config/dbConfig');
 
 class Feedback {
     static async findAll() {
-        const query = 'SELECT * FROM Feedback';
-        const { rows } = await db.query(query);
-        return rows;
+        try {
+            let pool = await sql.connect(dbConfig);
+            const { recordset } = await pool.request().query('SELECT * FROM Feedback');
+            sql.close();
+            return recordset;
+        } catch (error) {
+            sql.close();
+            throw error;
+        }
     }
 
     static async findById(id) {
-        const query = 'SELECT * FROM Feedback WHERE FeedbackID = $1';
-        const { rows } = await db.query(query, [id]);
-        return rows[0];
+        try {
+            let pool = await sql.connect(dbConfig);
+            const { recordset } = await pool.request()
+                                             .input('id', sql.Int, id)
+                                             .query('SELECT * FROM Feedback WHERE FeedbackID = @id');
+            sql.close();
+            return recordset.length > 0 ? recordset[0] : null;
+        } catch (error) {
+            sql.close();
+            throw error;
+        }
     }
-
-    // Additional methods for CRUD operations can be added here
 }
 
 module.exports = Feedback;
