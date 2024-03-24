@@ -1,31 +1,36 @@
-const sql = require('mssql');
-const dbConfig = require('../config/dbConfig');
+const pool = require('../config/dbConfig');
 
 class FeedbackCategory {
     static async findAll() {
-        try {
-            let pool = await sql.connect(dbConfig);
-            const { recordset } = await pool.request().query('SELECT * FROM FeedbackCategories');
-            sql.close();
-            return recordset;
-        } catch (error) {
-            sql.close();
-            throw error;
-        }
+        const res = await pool.query('SELECT * FROM FeedbackCategories');
+        return res.rows;
     }
 
     static async findById(id) {
-        try {
-            let pool = await sql.connect(dbConfig);
-            const { recordset } = await pool.request()
-                                             .input('id', sql.Int, id)
-                                             .query('SELECT * FROM FeedbackCategories WHERE CategoryID = @id');
-            sql.close();
-            return recordset.length > 0 ? recordset[0] : null;
-        } catch (error) {
-            sql.close();
-            throw error;
-        }
+        const res = await pool.query('SELECT * FROM FeedbackCategories WHERE CategoryID = $1', [id]);
+        return res.rows[0];
+    }
+
+    static async create(categoryData) {
+        const { name, description } = categoryData;
+        const res = await pool.query(
+            'INSERT INTO FeedbackCategories (Name, Description) VALUES ($1, $2) RETURNING *',
+            [name, description]
+        );
+        return res.rows[0];
+    }
+
+    static async update(id, categoryData) {
+        const { name, description } = categoryData;
+        const res = await pool.query(
+            'UPDATE FeedbackCategories SET Name = $1, Description = $2 WHERE CategoryID = $3 RETURNING *',
+            [name, description, id]
+        );
+        return res.rows[0];
+    }
+
+    static async delete(id) {
+        await pool.query('DELETE FROM FeedbackCategories WHERE CategoryID = $1', [id]);
     }
 }
 

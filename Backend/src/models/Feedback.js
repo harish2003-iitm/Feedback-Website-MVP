@@ -1,31 +1,36 @@
-const sql = require('mssql');
-const dbConfig = require('../config/dbConfig');
+const pool = require('../config/dbConfig');
 
 class Feedback {
     static async findAll() {
-        try {
-            let pool = await sql.connect(dbConfig);
-            const { recordset } = await pool.request().query('SELECT * FROM Feedback');
-            sql.close();
-            return recordset;
-        } catch (error) {
-            sql.close();
-            throw error;
-        }
+        const res = await pool.query('SELECT * FROM Feedback');
+        return res.rows;
     }
 
     static async findById(id) {
-        try {
-            let pool = await sql.connect(dbConfig);
-            const { recordset } = await pool.request()
-                                             .input('id', sql.Int, id)
-                                             .query('SELECT * FROM Feedback WHERE FeedbackID = @id');
-            sql.close();
-            return recordset.length > 0 ? recordset[0] : null;
-        } catch (error) {
-            sql.close();
-            throw error;
-        }
+        const res = await pool.query('SELECT * FROM Feedback WHERE FeedbackID = $1', [id]);
+        return res.rows[0];
+    }
+
+    static async create(feedbackData) {
+        const { title, description, userId, categoryId } = feedbackData;
+        const res = await pool.query(
+            'INSERT INTO Feedback (Title, Description, UserID, CategoryID) VALUES ($1, $2, $3, $4) RETURNING *',
+            [title, description, userId, categoryId]
+        );
+        return res.rows[0];
+    }
+
+    static async update(id, feedbackData) {
+        const { title, description, categoryId } = feedbackData;
+        const res = await pool.query(
+            'UPDATE Feedback SET Title = $1, Description = $2, CategoryID = $3 WHERE FeedbackID = $4 RETURNING *',
+            [title, description, categoryId, id]
+        );
+        return res.rows[0];
+    }
+
+    static async delete(id) {
+        await pool.query('DELETE FROM Feedback WHERE FeedbackID = $1', [id]);
     }
 }
 

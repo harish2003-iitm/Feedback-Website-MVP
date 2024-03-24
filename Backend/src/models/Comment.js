@@ -1,32 +1,39 @@
-const sql = require('mssql');
-const dbConfig = require('../config/dbConfig');
+const pool = require('../config/dbConfig');
 
 class Comment {
     static async findAll() {
-        try {
-            let pool = await sql.connect(dbConfig);
-            const { recordset } = await pool.request().query('SELECT * FROM Comments');
-            sql.close();
-            return recordset;
-        } catch (error) {
-            sql.close();
-            throw error;
-        }
+        const res = await pool.query('SELECT * FROM Comments');
+        return res.rows;
     }
 
     static async findById(id) {
-        try {
-            let pool = await sql.connect(dbConfig);
-            const { recordset } = await pool.request()
-                                             .input('id', sql.Int, id)
-                                             .query('SELECT * FROM Comments WHERE CommentID = @id');
-            sql.close();
-            return recordset.length > 0 ? recordset[0] : null;
-        } catch (error) {
-            sql.close();
-            throw error;
-        }
+        const res = await pool.query('SELECT * FROM Comments WHERE CommentID = $1', [id]);
+        return res.rows[0];
+    }
+
+    static async create(commentData) {
+        const { feedbackId, userId, commentText } = commentData;
+        const res = await pool.query(
+            'INSERT INTO Comments (FeedbackID, UserID, CommentText) VALUES ($1, $2, $3) RETURNING *',
+            [feedbackId, userId, commentText]
+        );
+        return res.rows[0];
+    }
+
+    static async update(id, commentData) {
+        const { commentText } = commentData;
+        const res = await pool.query(
+            'UPDATE Comments SET CommentText = $1 WHERE CommentID = $2 RETURNING *',
+            [commentText, id]
+        );
+        return res.rows
+        return res.rows[0];
+    }
+
+    static async delete(id) {
+        await pool.query('DELETE FROM Comments WHERE CommentID = $1', [id]);
     }
 }
 
 module.exports = Comment;
+

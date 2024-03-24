@@ -1,32 +1,27 @@
-const sql = require('mssql');
-const dbConfig = require('../config/dbConfig');
+const pool = require('../config/dbConfig');
 
 class Vote {
     static async findAll() {
-        try {
-            let pool = await sql.connect(dbConfig);
-            const { recordset } = await pool.request().query('SELECT * FROM Votes');
-            sql.close();
-            return recordset;
-        } catch (error) {
-            sql.close();
-            throw error;
-        }
+        const res = await pool.query('SELECT * FROM Votes');
+        return res.rows;
     }
 
     static async findByFeedbackId(feedbackId) {
-        try {
-            let pool = await sql.connect(dbConfig);
-            const { recordset } = await pool.request()
-                                             .input('feedbackId', sql.Int, feedbackId)
-                                             .query('SELECT * FROM Votes WHERE FeedbackID = @feedbackId');
-            sql.close();
-            return recordset;
-        } catch (error) {
-            sql.close();
-            throw error;
-        }
+        const res = await pool.query('SELECT * FROM Votes WHERE FeedbackID = $1', [feedbackId]);
+        return res.rows;
     }
+
+    static async create(voteData) {
+        const { feedbackId, userId, upvote } = voteData; // Assuming 'upvote' is a boolean
+        const res = await pool.query(
+            'INSERT INTO Votes (FeedbackID, UserID, Upvote) VALUES ($1, $2, $3) RETURNING *',
+            [feedbackId, userId, upvote]
+        );
+        return res.rows[0];
+    }
+
+    // Note: Updating and deleting votes might depend on your application's logic
+    // For example, you might toggle a vote rather than updating/deleting directly
 }
 
 module.exports = Vote;
