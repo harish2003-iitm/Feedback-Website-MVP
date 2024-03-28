@@ -1,27 +1,40 @@
-const pool = require('../config/dbConfig');
-
-class Vote {
-    static async findAll() {
-        const res = await pool.query('SELECT * FROM Votes');
-        return res.rows;
-    }
-
-    static async findByFeedbackId(feedbackId) {
-        const res = await pool.query('SELECT * FROM Votes WHERE FeedbackID = $1', [feedbackId]);
-        return res.rows;
-    }
-
-    static async create(voteData) {
-        const { feedbackId, userId, upvote } = voteData; // Assuming 'upvote' is a boolean
-        const res = await pool.query(
-            'INSERT INTO Votes (FeedbackID, UserID, Upvote) VALUES ($1, $2, $3) RETURNING *',
-            [feedbackId, userId, upvote]
-        );
-        return res.rows[0];
-    }
-
-    // Note: Updating and deleting votes might depend on your application's logic
-    // For example, you might toggle a vote rather than updating/deleting directly
-}
-
-module.exports = Vote;
+// models/Votes.js
+module.exports = (sequelize, DataTypes) => {
+  const Votes = sequelize.define('Votes', {
+    // Define the model attributes
+    feedbackId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Feedback', // This should match the name of the table, usually singular
+      key: 'id', // This should match the primary key of the Feedback table, usually 'id'
+    },
+    },
+    userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Users', // This should match the name of the Users table, usually singular
+      key: 'id', // This should match the primary key of the Users table, usually 'id'
+    },
+    },
+    voteType: {
+    type: DataTypes.STRING(10), // Limiting the string length for efficiency
+    allowNull: false,
+    validate: {
+      isIn: [['upvote', 'downvote']], // Ensures only 'upvote' or 'downvote' can be stored
+    },
+    },
+  }, {
+    timestamps: true, // Assuming you now want timestamps; remove if not
+    tableName: 'Votes' // Explicitly specifying table name for clarity
+  });
+  
+  Votes.associate = function(models) {
+    // Defining associations
+    Votes.belongsTo(models.Feedback, { foreignKey: 'feedbackId', as: 'Feedback' });
+    Votes.belongsTo(models.Users, { foreignKey: 'userId', as: 'User' });
+  };
+  
+  return Votes;
+};

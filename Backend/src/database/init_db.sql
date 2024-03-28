@@ -1,6 +1,6 @@
 -- Users Table
 CREATE TABLE Users (
-    UserID INT PRIMARY KEY,
+    UserID SERIAL PRIMARY KEY,
     Name VARCHAR(255),
     Email VARCHAR(255),
     PasswordHash VARCHAR(255)
@@ -8,75 +8,52 @@ CREATE TABLE Users (
 
 -- FeedbackCategories Table
 CREATE TABLE FeedbackCategories (
-    CategoryID INT PRIMARY KEY,
+    CategoryID SERIAL PRIMARY KEY,
     Name VARCHAR(255),
     Description VARCHAR(255)
 );
 
 -- Feedback Table
 CREATE TABLE Feedback (
-    FeedbackID INT PRIMARY KEY,
+    FeedbackID SERIAL PRIMARY KEY,
     Title VARCHAR(255),
     Description VARCHAR(255),
-    UserID INT,
-    CategoryID INT,
-    FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    FOREIGN KEY (CategoryID) REFERENCES FeedbackCategories(CategoryID)
+    UserID INT REFERENCES Users(UserID),
+    CategoryID INT REFERENCES FeedbackCategories(CategoryID)
 );
 
 -- Comments Table
 CREATE TABLE Comments (
-    CommentID INT PRIMARY KEY,
-    FeedbackID INT,
-    UserID INT,
-    CommentText VARCHAR(255),
-    FOREIGN KEY (FeedbackID) REFERENCES Feedback(FeedbackID),
-    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+    CommentID SERIAL PRIMARY KEY,
+    FeedbackID INT REFERENCES Feedback(FeedbackID),
+    UserID INT REFERENCES Users(UserID),
+    CommentText VARCHAR(255)
 );
 
--- Votes Table
-CREATE TABLE Votes (
-    VoteID INT PRIMARY KEY,
-    FeedbackID INT,
-    UserID INT,
-    Upvote BOOLEAN,
-    FOREIGN KEY (FeedbackID) REFERENCES Feedback(FeedbackID),
-    FOREIGN KEY (UserID) REFERENCES Users(UserID)
-);
-
--- Categories for feedback
+-- Categories Table (if needed distinct from FeedbackCategories)
 CREATE TABLE Categories (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
-    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    createdAt TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Adding categories and statuses to Feedback
-ALTER TABLE Feedback
-ADD COLUMN categoryId INT,
-ADD COLUMN status VARCHAR(100),
-ADD FOREIGN KEY (categoryId) REFERENCES Categories(id);
-
--- Votes for feedback
+-- Votes Table (PostgreSQL version without ENUM)
 CREATE TABLE Votes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    feedbackId INT,
-    userId INT,
-    voteType ENUM('upvote', 'downvote'),
-    FOREIGN KEY (feedbackId) REFERENCES Feedback(id),
-    FOREIGN KEY (userId) REFERENCES Users(id),
-    UNIQUE (feedbackId, userId)  -- Ensure one vote per user per feedback
+    id SERIAL PRIMARY KEY,
+    feedbackId INT REFERENCES Feedback(FeedbackID),
+    userId INT REFERENCES Users(UserID),
+    voteType VARCHAR(100) CHECK (voteType IN ('upvote', 'downvote')),
+    UNIQUE (feedbackId, userId)
 );
 
--- Official responses to feedback
 CREATE TABLE Responses (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     feedbackId INT,
     responseText TEXT,
-    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (feedbackId) REFERENCES Feedback(id)
+    createdAt TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (feedbackId) REFERENCES Feedback(FeedbackID)
 );
 

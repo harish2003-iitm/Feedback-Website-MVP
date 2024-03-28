@@ -1,28 +1,77 @@
-const Vote = require('../models/Vote');
+const Votes = require('../models/Vote');
 
+// Fetch all votes
 exports.getAllVotes = async (req, res) => {
     try {
-        const votes = await Vote.findAll();
-        res.json(votes);
+        const votes = await Votes.findAll();
+        return res.status(200).send(votes);
     } catch (error) {
-        res.status(500).send(error.message);
+        return res.status(400).send(error);
     }
 };
 
-exports.createVote = async (req, res) => {
+// Fetch votes for a specific feedbackId
+exports.getVotesByFeedbackId = async (req, res) => {
     try {
-        const newVote = await Vote.create(req.body);
-        res.status(201).json(newVote);
+        const { feedbackId } = req.params;
+        const votes = await Votes.findAll({
+            where: {
+                feedbackId
+            }
+        });
+        if(votes.length > 0) {
+            return res.status(200).send(votes);
+        } else {
+            return res.status(404).send({ message: 'No votes found for this feedback.' });
+        }
     } catch (error) {
-        res.status(500).send(error.message);
+        return res.status(400).send(error);
     }
 };
 
-exports.deleteVote = async (req, res) => {
+// Add a vote
+exports.addVote = async (req, res) => {
     try {
-        await Vote.delete(req.params.id);
-        res.status(204).send();
+        const { feedbackId, userId, voteType } = req.body;
+        // Check if the vote already exists
+        const existingVote = await Votes.findOne({
+            where: {
+                feedbackId,
+                userId,
+            },
+        });
+        if (existingVote) {
+            return res.status(409).send({ message: 'User has already voted on this feedback.' }); // 409 Conflict
+        }
+        const vote = await Votes.create({
+            feedbackId,
+            userId,
+            voteType,
+        });
+        return res.status(201).send(vote);
     } catch (error) {
-        res.status(500).send(error.message);
+        return res.status(400).send(error);
+    }
+};
+
+// Remove a vote
+exports.removeVote = async (req, res) => {
+    try {
+        const { feedbackId, userId } = req.params;
+        const vote = await Votes.findOne({
+            where: {
+                feedbackId,
+                userId,
+            },
+        });
+
+        if (vote) {
+            await vote.destroy();
+            return res.status(204).send(); // No content to send back on successful deletion
+        } else {
+            return res.status(404).send({ message: 'Vote not found.' });
+        }
+    } catch (error) {
+        return res.status(400).send(error);
     }
 };

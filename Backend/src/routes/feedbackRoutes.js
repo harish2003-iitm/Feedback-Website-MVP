@@ -1,12 +1,11 @@
 const express = require('express');
-const feedbackController = require('../controllers/feedbackController');
+const feedbackCategoryController = require('../controllers/feedbackCategoryController');
 const router = express.Router();
 
-// Define the routes for Feedback
-router.get('/', feedbackController.getAllFeedback);
-router.get('/:id', feedbackController.getFeedbackById);
-router.post('/', feedbackController.createFeedback);
-router.put('/:id', feedbackController.updateFeedback);
-router.delete('/:id', feedbackController.deleteFeedback);
+router.get('/', feedbackCategoryController.getAllCategories);
+router.get('/:id', feedbackCategoryController.getCategoryById);
+router.post('/', feedbackCategoryController.createCategory);
+router.put('/:id', feedbackCategoryController.updateCategory);
+router.delete('/:id', feedbackCategoryController.deleteCategory);
 
 module.exports = router;

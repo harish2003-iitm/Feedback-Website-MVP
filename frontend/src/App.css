@@ -1,38 +1,162 @@
-.App {
+/* Enhanced Aesthetics with Advanced Design Concepts */
+
+body {
+  font-family: 'Quicksand', sans-serif; /* Soft, friendly font */
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #E2ECFF 0%, #CFDEF3 100%); /* Soft blue gradient background for a calming atmosphere */
+  overflow-x: hidden; /* Prevents horizontal scroll */
+}
+
+.container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  backdrop-filter: blur(10px); /* Subtle blur effect for depth */
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+  border-radius: 20px;
+  box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.1),
+              -10px -10px 30px rgba(255, 255, 255, 0.5); /* Soft neumorphic effect */
+}
+
+h1 {
   text-align: center;
+  color: #5C7AEA; /* Harmonious with the background */
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+form {
+  background-color: rgba(255, 255, 255, 0.85);
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: inset 8px 8px 15px rgba(0, 0, 0, 0.05),
+              inset -8px -8px 15px rgba(255, 255, 255, 0.5); /* Inset neumorphic effect */
+  margin-bottom: 30px;
+  transition: all 0.5s ease; /* Smoother transition */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+form:hover {
+  background-color: rgba(255, 255, 255, 1);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+input[type="text"],
+input[type="email"],
+input[type="number"],
+textarea {
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  background: transparent;
+  border: 2px solid #CFDEF3; /* Matching the color theme */
+  border-radius: 15px;
+  transition: all 0.3s ease;
+  color: #5C7AEA; /* Text color */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+  background-color: #E2ECFF;
+  border-color: #5C7AEA;
+}
+
+button {
+  background: linear-gradient(145deg, #8FADEB, #5C7AEA);
   color: white;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: background 0.4s ease;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.App-link {
-  color: #61dafb;
+button:hover {
+  background: linear-gradient(145deg, #5C7AEA, #8FADEB);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.feedback-item, .user-item, .category-item {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1),
+              -5px -5px 15px rgba(255, 255, 255, 0.5);
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.feedback-item:hover, .user-item:hover, .category-item:hover {
+  transform: scale(1.03); /* Slight zoom effect on hover for interaction feedback */
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.2),
+              -10px -10px 20px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+h1 {
+  animation: float 4s ease-in-out infinite; /*
+  /* Header Animation */
+  animation: float 4s ease-in-out infinite; /* Gives the title a floating effect */
+}
+
+/* Additional Styles for List Items */
+.feedback-list, .user-list, .category-list {
+  margin-top: 20px;
+  padding: 0;
+}
+
+.feedback-list h2, .user-list h2, .category-list h2 {
+  text-align: center;
+  color: #5C7AEA;
+  margin-bottom: 20px; /* Adds more space above the list titles */
+}
+
+/* Enhanced Visuals for List Items */
+.feedback-item h3, .user-item h3, .category-item h3,
+.feedback-item p, .user-item p, .category-item p {
+  color: #6A7FDB; /* A softer shade that complements the primary blue */
+}
+
+/* Interactive Effects for Form Fields */
+input[type="text"]:hover, input[type="email"]:hover, input[type="number"]:hover, textarea:hover {
+  border-color: #8FADEB; /* Lighter blue for a gentle hover effect */
+}
+
+/* Custom Scrollbar for a Better Look */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #5C7AEA;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8FADEB;
+}
+
+/* Responsive Design for Smaller Screens */
+@media screen and (max-width: 768px) {
+  .container {
+    margin: 20px;
   }
-  to {
-    transform: rotate(360deg);
+
+  h1 {
+    font-size: 24px; /* Smaller font size for smaller screens */
+  }
+
+  form, .feedback-item, .user-item, .category-item {
+    border-radius: 12px; /* Smaller radius for a more suited appearance on small screens */
   }
 }

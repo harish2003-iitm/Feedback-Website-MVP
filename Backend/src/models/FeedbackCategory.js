@@ -1,4 +1,4 @@
-const pool = require('../config/dbConfig');
+const pool = require('../config/dbConfig'); // Ensure the path is correct
 
 class FeedbackCategory {
     static async findAll() {
@@ -11,20 +11,18 @@ class FeedbackCategory {
         return res.rows[0];
     }
 
-    static async create(categoryData) {
-        const { name, description } = categoryData;
+    static async create({ Name, Description }) {
         const res = await pool.query(
             'INSERT INTO FeedbackCategories (Name, Description) VALUES ($1, $2) RETURNING *',
-            [name, description]
+            [Name, Description]
         );
         return res.rows[0];
     }
 
-    static async update(id, categoryData) {
-        const { name, description } = categoryData;
+    static async update(id, { Name, Description }) {
         const res = await pool.query(
             'UPDATE FeedbackCategories SET Name = $1, Description = $2 WHERE CategoryID = $3 RETURNING *',
-            [name, description, id]
+            [Name, Description, id]
         );
         return res.rows[0];
     }

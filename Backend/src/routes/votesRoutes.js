@@ -1,10 +1,12 @@
 const express = require('express');
-const votesController = require('../controllers/votesController');
 const router = express.Router();
+const commentController = require('../controllers/commentsController');
 
-// Define the routes for Votes
-router.get('/', votesController.getAllVotes);
-router.post('/', votesController.createVote);
-router.delete('/:id', votesController.deleteVote);
+router.get('/', commentController.getAllComments);
+router.get('/:commentId', commentController.getCommentById);
+router.get('/feedback/:feedbackId', commentController.getCommentsByFeedbackId);
+router.post('/', commentController.createComment);
+router.put('/:commentId', commentController.updateComment);
+router.delete('/:commentId', commentController.deleteComment);
 
 module.exports = router;

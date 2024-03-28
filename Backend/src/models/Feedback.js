@@ -1,4 +1,4 @@
-const pool = require('../config/dbConfig');
+const pool = require('../config/dbConfig'); // Ensure this points to your pool configuration
 
 class Feedback {
     static async findAll() {
@@ -11,20 +11,18 @@ class Feedback {
         return res.rows[0];
     }
 
-    static async create(feedbackData) {
-        const { title, description, userId, categoryId } = feedbackData;
+    static async create({ Title, Description, UserID, CategoryID }) {
         const res = await pool.query(
             'INSERT INTO Feedback (Title, Description, UserID, CategoryID) VALUES ($1, $2, $3, $4) RETURNING *',
-            [title, description, userId, categoryId]
+            [Title, Description, UserID, CategoryID]
         );
         return res.rows[0];
     }
 
-    static async update(id, feedbackData) {
-        const { title, description, categoryId } = feedbackData;
+    static async update(id, { Title, Description, CategoryID }) {
         const res = await pool.query(
             'UPDATE Feedback SET Title = $1, Description = $2, CategoryID = $3 WHERE FeedbackID = $4 RETURNING *',
-            [title, description, categoryId, id]
+            [Title, Description, CategoryID, id]
         );
         return res.rows[0];
     }

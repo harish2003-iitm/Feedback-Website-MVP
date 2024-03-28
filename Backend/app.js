@@ -8,6 +8,8 @@ const userRoutes = require('./userRoutes');
 const feedbackRoutes = require('./src/routes/feedbackRoutes');
 const commentsRoutes = require('./src/routes/commentsRoutes'); 
 const votesRoutes = require('./src/routes/votesRoutes'); 
+const feedbackCategoryRoutes = require('./src/routes/feedbackCategoryRoutes'); 
+const responseRoutes = require('./src/routes/responseRoutes');
 
 // Middleware
 app.use(cors()); // Handle CORS
@@ -18,6 +20,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/comments', commentsRoutes);
 app.use('/api/votes', votesRoutes);
+app.use('/api/feedbackcategories', feedbackCategoryRoutes);
+app.use('/api/responses', responseRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 3000;
