@@ -20,7 +20,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/comments', commentsRoutes);
 app.use('/api/votes', votesRoutes);
-app.use('/api/feedbackcategories', feedbackCategoryRoutes);
+app.use('/api/feedbackCategories', feedbackCategoryRoutes);
 app.use('/api/responses', responseRoutes);
 
 // Start the server

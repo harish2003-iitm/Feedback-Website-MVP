@@ -30,15 +30,6 @@ CREATE TABLE Comments (
     CommentText VARCHAR(255)
 );
 
--- Categories Table (if needed distinct from FeedbackCategories)
-CREATE TABLE Categories (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
-    createdAt TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updatedAt TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
 -- Votes Table (PostgreSQL version without ENUM)
 CREATE TABLE Votes (
     id SERIAL PRIMARY KEY,
@@ -48,6 +39,7 @@ CREATE TABLE Votes (
     UNIQUE (feedbackId, userId)
 );
 
+-- Responses Table
 CREATE TABLE Responses (
     id SERIAL PRIMARY KEY,
     feedbackId INT,

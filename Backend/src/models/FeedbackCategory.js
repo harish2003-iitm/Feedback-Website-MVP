@@ -1,4 +1,4 @@
-const pool = require('../config/dbConfig'); // Ensure the path is correct
+const pool = require('../config/dbConfig');
 
 class FeedbackCategory {
     static async findAll() {
@@ -6,8 +6,8 @@ class FeedbackCategory {
         return res.rows;
     }
 
-    static async findById(id) {
-        const res = await pool.query('SELECT * FROM FeedbackCategories WHERE CategoryID = $1', [id]);
+    static async findById(CategoryID) {
+        const res = await pool.query('SELECT * FROM FeedbackCategories WHERE CategoryID = $1', [CategoryID]);
         return res.rows[0];
     }
 
@@ -19,16 +19,16 @@ class FeedbackCategory {
         return res.rows[0];
     }
 
-    static async update(id, { Name, Description }) {
+    static async update(CategoryID, { Name, Description }) {
         const res = await pool.query(
             'UPDATE FeedbackCategories SET Name = $1, Description = $2 WHERE CategoryID = $3 RETURNING *',
-            [Name, Description, id]
+            [Name, Description, CategoryID]
         );
         return res.rows[0];
     }
 
-    static async delete(id) {
-        await pool.query('DELETE FROM FeedbackCategories WHERE CategoryID = $1', [id]);
+    static async delete(CategoryID) {
+        await pool.query('DELETE FROM FeedbackCategories WHERE CategoryID = $1', [CategoryID]);
     }
 }
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
+import DescriptionAnalysis from './DescriptionAnalysis';
 
 const baseURL = 'http://localhost:3000/api';
 
@@ -105,26 +106,37 @@ const UserList = ({ users }) => (
     </div>
 );
 
-const CategoryForm = ({ onCategorySubmit }) => {
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-
+const CategoryForm = ({ onSubmit, initialData = {} }) => {
+    const [name, setName] = useState(initialData.name || '');
+    const [description, setDescription] = useState(initialData.description || '');
+  
     const handleSubmit = (event) => {
-        event.preventDefault();
-        onCategorySubmit({ Name: name, Description: description });
-        setName('');
-        setDescription('');
+      event.preventDefault();
+      onSubmit({ Name: name, Description: description });
+      setName('');
+      setDescription('');
     };
-
+  
     return (
-        <form onSubmit={handleSubmit}>
-            <h2>Create New Feedback Category</h2>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Category Name" required />
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Category Description" required />
-            <button type="submit">Create Category</button>
-        </form>
+      <form onSubmit={handleSubmit} className="form">
+        <h2>{initialData.id ? 'Update' : 'Create'} Category</h2>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Category Name"
+          required
+        />
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Category Description"
+          required
+        />
+        <button type="submit">{initialData.id ? 'Update' : 'Create'} Category</button>
+      </form>
     );
-};
+  };  
 
 const CategoryList = ({ categories }) => (
     <div>
@@ -205,6 +217,7 @@ const CommentList = ({ comments }) => (
     </div>
 );
 
+
 function App() {
     const [feedbacks, setFeedbacks] = useState([]);
     const [users, setUsers] = useState([]);
@@ -244,7 +257,6 @@ function App() {
             setCategories([...categories, res.data]);
         });
     };
-
     const handleResponseSubmit = (response) => {
         axios.post(`${baseURL}/responses`, response).then((res) => {
             setResponses([...responses, res.data]);
@@ -282,6 +294,7 @@ function App() {
                     <CommentList comments={comments.filter(comment => comment.FeedbackID === selectedFeedbackId)} />
                 </>
             )}
+            <DescriptionAnalysis feedbacks={categories} />
         </div>
     );
 }
